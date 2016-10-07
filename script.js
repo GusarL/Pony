@@ -51,7 +51,7 @@ var PonyES5 = (function () {
 
 			    function _walk () {
 
-					return console.log('Pony walks');
+					return console.log(this.get('name') + ' walks');
 				}
 
 				function _eatsGrass () {
@@ -60,16 +60,16 @@ var PonyES5 = (function () {
 				}
 
 				function _work () {
-					return console.log('Pony works');
+					return console.log(this.get('name') + ' works');
 				}
 
 			    function _status () {
 					var status = _isWorkingHours ();
 
 					if (status === 'Work!'){
-						_work();
+						_work.call(this);
 					} else {
-						_walk();
+						_walk.call(this);
 					}
 				}
 				
@@ -87,6 +87,7 @@ console.dir(P);
 var ponyES5 = new PonyES5();
 ponyES5.set('name', 'Koral');
 console.log(ponyES5.get('name'));
+ponyES5.walk();
 ponyES5.status();
 
 class Pony {
@@ -98,21 +99,10 @@ class Pony {
 			    color: ''  
 			};
 
-	    this.isAllowedKeys = function (key) {
-		    var keys = Object.keys(attributes),
-				flag;
-	                    
-	        if (keys.indexOf(key) != -1) {
-	            flag = true;  
-	        } else {
-	            flag = false;
-	        }
-
-			return flag;
-		};
+	    
 		this.set = function (key, value) {
 
-	        if (this.isAllowedKeys(key)) {
+	        if (this.isAllowedKeys(key, attributes)) {
 	            attributes[key] = value;
 	        };
 		};
@@ -123,7 +113,19 @@ class Pony {
 		};
 
 	}
-    
+    isAllowedKeys (key, obj) {
+		    var keys = Object.keys(obj),
+				flag;
+	                    
+	        if (keys.indexOf(key) != -1) {
+	            flag = true;  
+	        } else {
+	            flag = false;
+	        }
+
+			return flag;
+	}
+
     isWorkingHours () {
 		var currentTime = new Date(),
 			hours = currentTime.getHours(),
